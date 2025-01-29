@@ -50,10 +50,10 @@ app.get("/auth", (req: Request, res: Response) => {
     access_type: "offline",
     scope: [
       "https://www.googleapis.com/auth/calendar",
-      "https://mail.google.com/",
-      "https://www.googleapis.com/auth/gmail.modify",
-      "https://www.googleapis.com/auth/gmail.readonly",
-      "https://www.googleapis.com/auth/gmail.metadat",
+      // "https://mail.google.com/",
+      // "https://www.googleapis.com/auth/gmail.modify",
+      // "https://www.googleapis.com/auth/gmail.readonly",
+      // "https://www.googleapis.com/auth/gmail.metadat",
     ],
   });
   res.redirect(authUrl);
@@ -167,12 +167,11 @@ app.post("/list-events-day", async (req: Request, res: Response) => {
     const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
 
     const dateString = req.body.date;
-    console.log("date string", dateString);
-    const dateMoment = moment(dateString, "YYYY-MM-DD");
+    const dateMoment = moment(dateString, "DD/MM/YYYY"); // Specify locale
 
     // Definir o intervalo de tempo para buscar os eventos (opcional)
     const timeMin = dateMoment.startOf("day").toISOString(); // Início do dia atual
-    const timeMax = dateMoment.endOf("day").toISOString(); // Fim do mês atual
+    const timeMax = dateMoment.endOf("day").toISOString(); // Fim do dia atual
 
     const response = await calendar.events.list({
       calendarId: "primary",
@@ -183,7 +182,7 @@ app.post("/list-events-day", async (req: Request, res: Response) => {
     });
 
     const events = response.data.items;
-
+    console.log(events);
     if (events?.length) {
       res.json(events).status(200);
     } else {
@@ -200,8 +199,7 @@ app.post("/list-events-at-end-year", async (req: Request, res: Response) => {
     const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
 
     const dateString = req.body.date;
-
-    const dateMoment = moment(dateString, "YYYY-MM-DD");
+    const dateMoment = moment(dateString, "dd/MM/yyyy");
 
     // Definir o intervalo de tempo para buscar os eventos (opcional)
     const timeMin = dateMoment.toISOString(); // Início do dia atual
